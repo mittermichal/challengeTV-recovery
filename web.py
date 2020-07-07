@@ -4,7 +4,7 @@ import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
 import re
-from db import db_session, Match, Demo
+from db import db_session, Match, Demo, DemoMatch, DemoMatchAssocType
 from sqlalchemy.orm.exc import NoResultFound
 
 # def parse_view(id):
@@ -148,7 +148,8 @@ def size_match(byte_size, var_size):
 
 def demo_to_match_by_size():
     matches = Match.query.filter(Match.size != None).all()
-    for demo in Demo.query.all():
+    for demo in Demo.query.order_by(Demo.id).all():
+        print('demo:', demo.id)
         for match in matches:
             if size_match(
                     {'value': demo.size, 'unit': 'B'},
@@ -156,7 +157,12 @@ def demo_to_match_by_size():
             ):
                 msg = "{} ==> {}".format(demo.path, match.id)
                 print(msg)
-                return
+                db_session.add(DemoMatch(
+                        demo_id=demo.id,
+                        match_id=match.id,
+                        type=DemoMatchAssocType.size.value
+                    ))
+                db_session.commit()
 
 
 if __name__ == '__main__':
