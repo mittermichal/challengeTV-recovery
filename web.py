@@ -47,7 +47,10 @@ def file_list_generator(content):
         if i < 3:  # skip [To Parent Directory]
             continue
         if isinstance(e, NavigableString):
-            file['size'] = re.match(r"\s+(\d+)\s+$", re.split('[AP]M', e)[1])[1]
+            try:
+                file['size'] = re.match(r"\s+(\d+)\s+$", re.split('[AP]M', e)[1])[1]
+            except TypeError:
+                break  # <dir>
             # print(i, e)
         elif e.name == 'a':
             file['path'] = e.attrs['href']
