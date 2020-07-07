@@ -93,20 +93,46 @@ def parse_demo_size_from_match_page(content):
 
 
 def index_matches():
-    matches = []
-    dir = 'cache/ChallengeTV/demos/view'
-    for file in os.listdir(dir):
-        file_path = os.path.join(dir, file)
+    rv = []
+    directory = 'cache/ChallengeTV/demos/view'
+    match_i = 1
+    for file in os.listdir(directory):
+        file_path = os.path.join(directory, file)
         with open(file_path, 'r') as f:
-            size = parse_demo_size_from_match_page(f.read())
-        matches.append({'size': size})
-    return matches
+            try:
+                size = parse_demo_size_from_match_page(f.read())
+            except ValueError:
+                print('Unknown file size')
+                continue
+            else:
+                rv.append({'size': size, 'file': file})
+            if match_i % 50 == 0:
+                print('match_i', match_i)
+            match_i += 1
+    return rv
 
 
 def size_match(byte_size, megabyte_size):
     if byte_size['unit'] != 'B' or megabyte_size['unit'] != 'MB':
         raise Exception('wrong units')
     return round(byte_size['value'] / 1024 / 1024, 2) == megabyte_size['value']
+
+
+if __name__ == '__main__':
+    with open('tmp/matches.txt', 'w') as log:
+        demo_i = 1
+        matches = index_matches()  # TODO: store this
+        for demo in parse_demo_list():
+            for match in matches:
+                if size_match(demo['size'], match['size']):
+                    msg = "{} ==> {}".format(demo['path'], match['file'])
+                    print(msg)
+                    log.write(msg)
+                    break
+            if demo_i % 50 == 0:
+                print('demo_i', demo_i)
+            demo_i += 1
+
 
 
 # parse_demo_list()
