@@ -1,6 +1,6 @@
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine('sqlite:///./tmp/test.db', convert_unicode=True)
@@ -14,7 +14,7 @@ Base.query = db_session.query_property()
 class Match(Base):
     __tablename__ = 'match'
     id = Column(Integer, primary_key=True, index=True)
-    size = Column(Integer, index=True)
+    size = Column(Float, index=True)
     unit = Column(String(2), index=True)
 
 

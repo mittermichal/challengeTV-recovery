@@ -1,3 +1,5 @@
+import time
+
 import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
@@ -98,6 +100,9 @@ def parse_demo_size_from_match_page(content):
 def index_matches():
     directory = 'cache/ChallengeTV/demos/view'
     match_i = 1
+    start_time = time.time()
+    time_spent = 0
+    count = len(os.listdir(directory))
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
         with open(file_path, 'r') as f:
@@ -109,23 +114,25 @@ def index_matches():
                 except ValueError:
                     size = None
                 if size is not None:
-                    if round(size['value']*100) > 0:
-                        match = Match(
-                            id=int(file),
-                            size=int(size['value']*100),
-                            unit=size['unit']
-                        )
-                    else:
-                        raise Exception("Unexpected size rounding")
+                    match = Match(
+                        id=int(file),
+                        size=size['value'],
+                        unit=size['unit']
+                    )
                 else:
                     match = Match(id=int(file))
                 db_session.add(match)
                 db_session.commit()
 
-            # TODO: print estimate time left
-            if match_i % 50 == 0:
-                print('match_i', match_i)
-            match_i += 1
+                if match_i % 50 == 0:
+                    end_time = time.time()
+                    diff = end_time - start_time
+                    time_spent += diff
+                    avg_time_per_file = time_spent / match_i
+                    time_left = avg_time_per_file * (count - match_i)
+                    print('parsed: {} ETA: {}s SPENT: {}s'.format(match_i, time_left, time_spent))
+                    start_time = end_time
+                match_i += 1
 
 
 def size_match(byte_size, megabyte_size):
