@@ -132,16 +132,37 @@ def index_matches():
                 match_i += 1
 
 
-def size_match(byte_size, megabyte_size):
-    if byte_size['unit'] != 'B' or megabyte_size['unit'] != 'MB':
-        raise Exception('wrong units')
-    return round(byte_size['value'] / 1024 / 1024, 2) == megabyte_size['value']
+# select unit from match group by unit; -> B,KB,MB
+def size_match(byte_size, var_size):
+    if byte_size['unit'] != 'B' or var_size['unit'] not in ['B', 'KB', 'MB']:
+        raise Exception('wrong byte unit')
+    if var_size['unit'] == 'B':
+        return byte_size['value'] == var_size['value']
+    elif var_size['unit'] == 'KB':
+        return round(byte_size['value'] / 1024, 2) == var_size['value']
+    elif var_size['unit'] == 'MB':
+        return round(byte_size['value'] / 1024 / 1024, 2) == var_size['value']
+    else:
+        raise Exception('wrong var unit')
+
+
+def demo_to_match_by_size():
+    matches = Match.query.filter(Match.size != None).all()
+    for demo in Demo.query.all():
+        for match in matches:
+            if size_match(
+                    {'value': demo.size, 'unit': 'B'},
+                    {'value': match.size, 'unit': match.unit}
+            ):
+                msg = "{} ==> {}".format(demo.path, match.id)
+                print(msg)
+                return
 
 
 if __name__ == '__main__':
     # index_matches()
-    index_demo_list()
-    
+    # index_demo_list()
+    demo_to_match_by_size()
     # with open('tmp/matches.txt', 'w') as log:
     #     demo_i = 1
     #     matches = get_matches()
