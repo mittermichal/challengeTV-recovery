@@ -1,0 +1,692 @@
+
+
+
+
+
+/*
+     FILE ARCHIVED ON 10:34:25 júl 22, 2012 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 12:47:28 mar 3, 2017.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*  
+Template name: Emplode
+Template URI: http://templates.arcsin.se/emplode-website-template/
+Release date: 2008-12-19
+Description: A clean and simple two-column template.
+Author: Viktor Persson
+Author URI: http://arcsin.se/
+
+This template is licensed under a Creative Commons Attribution 2.5 License:
+http://templates.arcsin.se/license/
+*/
+
+/*
+Modified by !phil
+* smaller sidebar - donking's request 2009/04/21
+* demotron font - popular demand
+
+modified by minky - 19/01/2010
+- toggle sidebar hide class added
+- minor adjustments at bottom
+*/
+
+/* 
+   Reset (http://meyerweb.com/eric/tools/css/reset/)
+------------------------------------------------------------------- */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, 
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, 
+img, ins, kbd, q, s, samp, small, strike, strong, sub, tt, var, b, u, i, 
+center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, 
+tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; 
+font-size: 100%; vertical-align: baseline; background: transparent; } body { 
+line-height: 1; } ol, ul { list-style: none; } blockquote, q { quotes: none; } 
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: 
+none; } :focus { outline: 0; } ins { text-decoration: none; } del { text-decoration: line-through; }
+table { border-collapse: collapse; border-spacing: 0; }
+
+
+/* 
+   General 
+------------------------------------------------------------------- */
+
+html {
+	font-size: 62.5%; /* reset 1em to 10px */
+	height: 100%;
+}
+
+body {
+	background: #485E6F url('/web/20120722103425/http://challenge-tv.com/img/body.jpg') repeat-x;
+	color: #D2D2C2;
+	font: normal 1.2em Tahoma,sans-serif;
+	height: 100%;
+	padding-bottom: 1px; /* force scrollbars */
+}
+
+
+/* 
+   Typography 
+------------------------------------------------------------------- */
+
+p {
+	line-height: 1.4em;
+	padding: 0.2em 0 1.2em;
+}
+
+h1 {font: normal 3em Georgia,sans-serif;}
+h2 {font: normal 2.2em Georgia,sans-serif;}
+h3 {font: normal 2em Georgia,sans-serif;}
+h4 {font: normal 1.8em Georgia,sans-serif;}
+h5 {font: normal 1.6em Georgia,sans-serif;}
+h6 {font: bold 1.2em Georgia,sans-serif;}
+
+h1,h2,h3,h4,h5,h6 {margin-bottom: 0.2em;}
+
+blockquote {
+	background: #F6F6F2 url('/web/20120722103425/http://challenge-tv.com/img/backgrounds.gif') no-repeat 0 -414px;
+	border-bottom: 1px solid #E0E0D4;
+	border-top: 1px solid #E0E0D4;
+	color: #332;
+	display: block;
+	margin: 0.6em 0 1.6em;
+	padding: 0.8em 1em 0.2em 46px;
+}
+
+
+/* 
+   Tables
+------------------------------------------------------------------- */
+
+table.data_table {
+	margin-bottom: 2em;
+	width: 100%;
+	border-collapse: collapse;
+	border: none;
+}
+table.data_table th {
+	background: #333;
+	border: 1px solid #333;
+	color: #555;
+	text-align: left;
+}
+table.data_table td, table th {padding: 6px 3px; }
+table.data_table td {border-bottom: 1px solid #505050;}
+
+table.data_table tr.row_odd {background: #42464A;}
+
+
+/* 
+   Lists
+------------------------------------------------------------------- */
+
+.tabbed_list {margin: 0;}
+.tabbed_list li {float: left;}
+
+
+
+/* 
+   Links 
+------------------------------------------------------------------- */
+
+a {color: #C6B57B;}
+a:hover {
+	color: #FF6;
+	text-decoration: underline;
+}
+
+
+/* 
+   Forms 
+------------------------------------------------------------------- */
+
+
+/* 
+   Images 
+------------------------------------------------------------------- */
+
+img.bordered {
+	background-color: #FFF;
+	border: 1px solid #DDD;
+	padding: 3px;
+}
+
+img.left {margin: 0 15px 12px 0;}
+img.right {margin: 0 0 15px 12px;}
+
+
+/* 
+   Floats
+------------------------------------------------------------------- */
+
+.left {float: left;}
+.right {float: right;}
+
+.clear,.clearer {clear: both;}
+.clearer {
+	display: block;
+	font-size: 0;
+	line-height: 0;	
+}
+
+
+/* 
+   Columns
+------------------------------------------------------------------- */
+
+.col2 {width: 49%;}
+.col4 {width: 24%;}
+.col3 {width: 33%;}
+
+
+/* 
+   Misc 
+------------------------------------------------------------------- */
+
+span.text_separator {padding: 0 3px;}
+
+
+/* 
+   Layout 
+------------------------------------------------------------------- */
+
+/* Shared */
+
+
+/* General */
+#layout_wrapper {
+	background: #5B6E7E url('/web/20120722103425/http://challenge-tv.com/img/layout_wrapper.jpg') repeat-x;
+	padding: 12px;
+}
+#layout_wrapper_outer {
+	width: 1120px;
+	margin: 20px auto 0;
+}
+
+#layout_container {
+	border: 1px solid #111;	
+}
+
+
+/* Header */
+#header {
+	background: #111417;
+	border-bottom: 1px solid #000;
+}
+
+#logo {
+	width: 340px;
+	border-right: 1px solid #000;
+}
+#logo_content {padding: 10px 12px;}
+
+#nav_sections .tabbed_list a {
+	display: block;
+	padding: 11px 20px 12px;
+	border-top: 1px solid #222;
+	text-decoration: none;
+	color: #AAA;
+	font: normal 1.5em Georgia,sans-serif;
+}
+#nav_sections .tabbed_list a:hover {color: #EEE;}
+#nav_sections .tabbed_list li {border-right: 1px solid #000;}
+#nav_sections .tabbed_list li.current_tab a {
+	background: #1A1D20;
+	color: #DDD;
+}
+
+/* Userpanel */
+#userpanel {
+	border-top: 1px solid #36495C;
+	background: url('/web/20120722103425/http://challenge-tv.com/img/network.gif') repeat-x;
+	border-bottom: 1px solid #123;
+	color: #89A;
+	font-size: 0.9em;
+}
+#userpanel_content {padding: 10px 12px;}
+#userpanel a {color: #9AB;}
+#userpanel a:hover {color: #CDE;}
+
+
+/* Search */
+#search {
+	border-top: 1px solid #234;
+	background: #123;
+	border-bottom: 1px solid #012;
+}
+#search_content {
+	padding: 6px 8px;
+}
+#search input {
+	border: 1px solid #666;
+	padding: 4px;
+	font: normal 1.4em sans-serif;
+}
+
+
+/* Main wrapper */
+#main_wrapper {
+	background: url('/web/20120722103425/http://challenge-tv.com/img/main_wrapper.gif') repeat-y;
+	border-bottom: 1px solid #161F28;
+	background-position: -100px 0;
+}
+
+
+/* Main  */
+#main {
+	border-top: 1px solid #3F464D;
+	width: 794px;
+}
+#main_content {padding: 14px 20px;}
+
+/* Sidebar */
+#sidebar, #sidebar2 {	
+	width: 150px;
+}
+#sidebar_content, #sidebar2_content {
+	border-top: 1px solid #44484D;
+}
+
+
+/* Network */
+#network {
+	border-top: 1px solid #36495C;
+	border-bottom: 1px solid #2E3D4C;
+	background: #1E2D3C url('/web/20120722103425/http://challenge-tv.com/img/network.gif') repeat-x;
+	font-size: 0.9em;
+	color: #ABC;
+}
+
+#network_content {	
+	padding: 0 12px;
+}
+#network ul {
+	border-top: 1px solid #2E3D4C;
+	margin: 0;
+}
+#network li {
+	border-bottom: 1px solid #2E3D4C; list-style: none;
+}
+#network li a {
+	display: block;
+	padding: 5px 0 5px 3%;
+	width: 97%;
+	text-decoration: none;
+}
+#network li a {color: #789;}
+#network li a:hover {
+	color: #EEE;
+	background: #253443;
+}
+
+.network_col {width: 217px;}
+#network_col_2, #network_col_3 {margin-left: 17px;}
+
+#network .network_content {padding: 12px 0;}
+
+#network .network_title {
+	color: #9AB;
+	background: #1C2B3A;
+	padding: 4px 8px 5px;
+	margin-bottom: 6px;
+	font: normal 1.6em Georgia,sans-serif;
+}
+
+
+/* Footer links */
+#footer {
+	background: #030303;
+	color: #666;
+}
+#footer_content {padding: 14px 16px 14px;}
+
+#footer .left {padding-top: 2px;}
+#footer .right {font-size: 1.2em;}
+#footer a {color: #999;}
+#footer a:hover {color: #CCC;}
+
+
+/* 
+   Posts 
+------------------------------------------------------------------- */
+
+.post {
+	margin-bottom: 20px;
+	padding: 10px 12px 0;
+	border: 1px solid #47515C;
+	background: #3B434C;
+}
+
+.post_title a,.post_date a {text-decoration: none;}
+.post_date a:hover,.post_meta a:hover {text-decoration: underline;}
+
+.post_icon {width: 46px;}
+.post_icon img
+	{
+	display: block;
+	}
+
+.post_title h2 {margin: 0;}
+
+.post_date {
+	color: #789;
+	padding: 8px 0;
+	margin: 0 0 10px;
+	border-bottom: 1px solid #47515C;
+}
+.post_date a {color: #444;}
+
+.post_meta {
+	border-top: 1px solid #434A52;
+	color: #456;
+	padding: 8px 10px;
+	margin: 0 -12px;
+	background: #353C44;
+}
+.post_meta a {color: #789;}
+.post_meta a:hover {color: #ABC;}
+
+.post_body {
+	
+}
+
+/* 
+   Demos 
+------------------------------------------------------------------- */
+
+.demo {
+	margin-bottom: 20px;
+	padding: 10px 12px 0;
+	border: 1px solid #47515C;
+	background: #3B434C;
+}
+
+.demo_title a,.demo_date a {text-decoration: none;}
+.demo_date a:hover,.demo_meta a:hover {text-decoration: underline;}
+
+.demo_icon {width: 46px;}
+.demo_icon img {display: block;}
+
+.demo_title h2 {margin: 0;}
+
+.demo_date {
+	color: #789;
+	padding: 8px 0;
+	margin: 0 0 10px;
+	border-bottom: 1px solid #47515C;
+}
+.demo_date a {color: #D2D2C2;}
+
+.demo_meta {
+	border-top: 1px solid #434A52;
+	color: #456;
+	padding: 8px 10px;
+	margin: 0 -12px;
+	background: #353C44;
+}
+.demo_meta a {color: #789;}
+.demo_meta a:hover {color: #ABC;}
+
+.demo_body {
+	
+}
+
+/* Archives */
+.archive_pagination {margin-bottom: 1.6em;}
+.archive_post {margin-bottom: 1em;}
+.archive_post_date {
+	background: url('/web/20120722103425/http://challenge-tv.com/img/grain_light.gif');
+	border-bottom: 1px solid #C5C5B5;
+	border-right: 1px solid #CFCFBF;
+	float: left;
+	margin-right: 12px;
+	padding: 3px 0 5px;
+	text-align: center;
+	width: 44px;
+}
+.archive_post_day {font: normal 1.8em Georgia,serif;}
+
+
+/* 
+   Upload demo
+------------------------------------------------------------------- */
+
+#upload_demo img {
+	display: block;
+	width: 150px;
+}
+
+
+/* 
+   Latest demos box
+------------------------------------------------------------------- */
+
+.latest_demos_list {
+	border: 1px solid #55607C;
+	background: #45505C url('/web/20120722103425/http://challenge-tv.com/img/latest_demos.jpg') repeat-x left center;
+	padding: 12px;
+	margin-bottom: 20px;
+}
+.latest_demos a {text-decoration: none;}
+
+/*
+.latest_demos ul.tabbed_list li {
+	margin-right: 1px;
+	padding: 6px 12px;
+	background: #1C2B3A;
+	font-size: 1.2em;
+}
+.latest_demos ul.tabbed_list li a {color: #CCB;}
+*/
+
+.latest_demos_list a {
+	color: #ABC;
+	display: block;
+	padding: 4px 0;
+	width: 97%;
+	padding-left: 3%;
+}
+.latest_demos_list a:hover {
+	color: #CDE;
+	background: #405060;
+}
+.latest_demos_list li {
+	border-bottom: 1px solid #5B6672;
+}
+
+/* .latest_demos_col {width: 198px;} */
+/* after sidebar resize: ((198*3)+ 100)/3 = 231+1/3 */
+.latest_demos_col {width: 231px;}
+#lastest_demos_col_2 {margin-left: 17px;}
+
+
+/* 
+   Game titles
+------------------------------------------------------------------- */
+
+.game_listing {margin-bottom: 12px;}
+
+.game_listing a {
+	text-decoration: none;
+	color: #ABC;
+}
+.game_listing a:hover {
+	text-decoration: underline;
+	color: #CDE;
+}
+
+.game_listing .game_header {
+	padding: 4px;
+	background: #252A31 url('/web/20120722103425/http://challenge-tv.com/img/game_header.gif') repeat-x;
+	border-top: 1px solid #21272F;
+	border-bottom: 1px solid #1A1F25;
+}
+
+/*	font-size: 1.5em; */
+.game_listing .game_title {	
+	font-size: 14.4px;
+}
+.game_listing .game_title a {color: #CCC;}
+.game_listing .game_title a:hover {color: #FFF;}
+
+.game_listing .game_icon {
+	width: 34px;
+}
+.game_listing .game_icon img {
+	display: block;
+}
+
+.game_list li {
+	background: #313840;
+	border-bottom: 1px solid #212830;
+	border-top: 1px solid #414850;
+	color: #678;
+	padding: 3px 8px 5px;
+	font-size: 11px;
+}
+.game_list li.alt {
+	background: #363D45;
+	border-top-color: #464D55;
+	border-bottom-color: #262D35;
+}
+.game_list li .left {font-size: 1.2em;}
+
+
+/* 
+   Thumbnails
+------------------------------------------------------------------- */
+
+.thumbnails a.thumb {	
+	display: block;
+	float: left;
+	margin: 0 0 8px 8px;
+	padding: 2px;
+	background: #555;
+}
+.thumbnails a.thumb:hover {background: #888}
+.thumbnails .thumb img {display: block; border: 1px solid #333;}
+
+
+/* 
+   Comments 
+------------------------------------------------------------------- */
+
+.aspace {background: #FFF; color: #024; padding: 20px; margin-bottom: 12px; text-align: center;}
+
+
+
+/* 
+   Comments 
+------------------------------------------------------------------- */
+
+div.comment_list {
+	border-top: 1px solid #D6D6C6; 
+	margin: 1em 0 2em;
+}
+
+.comment {
+	border-bottom: 1px solid #D6D6C6;
+	padding-top: 10px;
+}
+.comment_date {
+	font-size: 0.9em;
+	padding-top: 4px;
+}
+.comment_date a {
+	color: #D2D2C2;
+	text-decoration: none;
+}
+.comment_date a:hover {
+	text-decoration: underline;
+}
+.comment_body {padding-top: 4px;}
+
+.comment_gravatar {width: 48px;}
+.comment_gravatar img {
+	background: #FFF;
+	border: 1px solid #DDD;
+	padding: 2px;
+}
+.comment_author {padding-top: 3px;}
+
+
+/* 
+   IE float/background fixes
+------------------------------------------------------------------- */
+
+
+/* phil's extensions */
+
+#demotron a
+	{
+	text-decoration: none;
+	}
+
+#demotron td div
+	{
+	width: 100px;
+	overflow: hidden;
+	}
+
+#demotron img, .comment_list img
+	{
+	margin-bottom: -1px;
+	}
+
+#demotron tr
+	{
+	height: 18px;
+	}
+
+#demotron td
+	{
+	padding: 1px 1px 1px 1px;
+	font-size: 12px;
+	height: 16px;
+	}
+
+
+/* minkys stuff */
+
+
+.chtv-hide  { display: none;  }
+#turn_wrapper { display: none !important;  }
+.game_listing.all .game_header  {   height: 30px; padding: 0 10px; font-size: 15px; line-height: 30px;  }
+.game_listing.all .game_header:hover    {   background-color: #272d33; background-image: none;  }
+.game_listing.all .game_header .game_demo_count     {   padding: 0 15px; font-size: 12px; color: #ccc;   }
+
+.float-clear    {   clear: both;    }
+.float-left     {   float: left;    }
+.float-right    {   float: right;   }
+
+.upload.demo    {}
+
+.upload.row     {   margin: 0; padding: 10px 0; min-height: 30px; overflow: auto;  }
+
+.upload.row:hover       {   background-color: #272d33;  }
+
+.upload.row.button      {   padding: 10px 150px;    }
+
+.upload.row.float-left  {   width: 50%; float: left;    }
+
+.upload.row .error-contain  {   float: right; width: 35%; line-height: 30px; background-color: #272d33;    }
+
+.upload.row p           {   padding: 5px;   }
+
+.upload.row label       {   float: left; width: 12%; padding: 0 5px; margin: 7px 0 0;    }
+
+.upload.row .error-contain label    {   float: none; width: auto; margin: 0; color: #999;    }
+
+.upload.row input       {   float: left; width: 45%; margin: 4px 0 0;    }
+.upload.row select      {   float: left; margin: 4px 0 0;    }
+.upload.row textarea    {   float: left; width: 45%; margin: 4px 0 0;    }
+.upload.row input[type=submit]  {   width: auto;    }
+
+.upload.row.float-left label    {   width: 24%; }
+.upload.row.float-left input    {   width: 30%; }
+
+.upload.message         {   padding: 5px;   }
+
+.upload.message p       {   padding: 5px; font-size: 14px; font-weight: bold; color: #fff;  }
