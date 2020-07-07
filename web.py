@@ -104,7 +104,9 @@ def index_matches():
 
 
 def size_match(byte_size, megabyte_size):
-    return round(byte_size / 1024 / 1024, 2) == megabyte_size
+    if byte_size['unit'] != 'B' or megabyte_size['unit'] != 'MB':
+        raise Exception('wrong units')
+    return round(byte_size['value'] / 1024 / 1024, 2) == megabyte_size['value']
 
 
 # parse_demo_list()

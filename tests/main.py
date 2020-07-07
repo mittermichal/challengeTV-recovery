@@ -8,4 +8,4 @@ def test_parse_demo_size_from_match_page():
 
 
 def test_size_match():
-    assert web.size_match(7727104, 7.37)
+    assert web.size_match({'value': 7727104, 'unit': 'B'}, {'value': 7.37, 'unit': 'MB'})
