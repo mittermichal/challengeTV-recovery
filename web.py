@@ -4,7 +4,7 @@ import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
 import re
-from db import db_session, Match
+from db import db_session, Match, Demo
 from sqlalchemy.orm.exc import NoResultFound
 
 # def parse_view(id):
@@ -19,7 +19,7 @@ from sqlalchemy.orm.exc import NoResultFound
 # match_demo['teamA'] =
 
 
-def parse_demo_list():
+def index_demo_list():
     demo_list_url = 'http://demos.igmdb.org/ChallengeTV/demostorage/Miscellaneous/'
     filename = 'cache/demo_list.html'
     if os.path.exists(filename):
@@ -31,17 +31,14 @@ def parse_demo_list():
         f = open(filename, "wb")
         f.write(content)
         f.close()
-    match_demo = {}
-    demo_list = []
-    return [
-        {
-            'size': {
-                'value': file['size'],
-                'unit': 'B'
-            },
-            'path': file['path']
-        }
-        for file in file_list_generator(content)]
+
+    for file in file_list_generator(content):
+        demo = Demo(
+            size=file['size'],
+            path=file['path']
+        )
+        db_session.add(demo)
+        db_session.commit()
 
 
 def file_list_generator(content):
@@ -142,7 +139,9 @@ def size_match(byte_size, megabyte_size):
 
 
 if __name__ == '__main__':
-    index_matches()
+    # index_matches()
+    index_demo_list()
+    
     # with open('tmp/matches.txt', 'w') as log:
     #     demo_i = 1
     #     matches = get_matches()
