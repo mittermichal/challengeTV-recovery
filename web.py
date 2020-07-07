@@ -2,6 +2,8 @@ import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
 import re
+from db import db_session, Match
+from sqlalchemy.orm.exc import NoResultFound
 
 # def parse_view(id):
 #     root=html.fromstring(requests.get('http://demos.igmdb.org/ChallengeTV/demos/view/'+str(id)).text)
@@ -88,28 +90,42 @@ def parse_demo_size_from_match_page(content):
     for h6 in e[0].find_all('h6'):
         if h6.contents[0].contents[0] == 'Demo Size: ':
             value, unit = h6.contents[1].split(' ')
+            del parsed_page
             return {'value': float(value), 'unit': unit}
     raise Exception("Demo size failed to get parsed")
 
 
 def index_matches():
-    rv = []
     directory = 'cache/ChallengeTV/demos/view'
     match_i = 1
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
         with open(file_path, 'r') as f:
             try:
-                size = parse_demo_size_from_match_page(f.read())
-            except ValueError:
-                print('Unknown file size')
-                continue
-            else:
-                rv.append({'size': size, 'file': file})
+                Match.query.filter(Match.id == int(file)).one()
+            except NoResultFound:
+                try:
+                    size = parse_demo_size_from_match_page(f.read())
+                except ValueError:
+                    size = None
+                if size is not None:
+                    if round(size['value']*100) > 0:
+                        match = Match(
+                            id=int(file),
+                            size=int(size['value']*100),
+                            unit=size['unit']
+                        )
+                    else:
+                        raise Exception("Unexpected size rounding")
+                else:
+                    match = Match(id=int(file))
+                db_session.add(match)
+                db_session.commit()
+
+            # TODO: print estimate time left
             if match_i % 50 == 0:
                 print('match_i', match_i)
             match_i += 1
-    return rv
 
 
 def size_match(byte_size, megabyte_size):
@@ -119,19 +135,20 @@ def size_match(byte_size, megabyte_size):
 
 
 if __name__ == '__main__':
-    with open('tmp/matches.txt', 'w') as log:
-        demo_i = 1
-        matches = index_matches()  # TODO: store this
-        for demo in parse_demo_list():
-            for match in matches:
-                if size_match(demo['size'], match['size']):
-                    msg = "{} ==> {}".format(demo['path'], match['file'])
-                    print(msg)
-                    log.write(msg)
-                    break
-            if demo_i % 50 == 0:
-                print('demo_i', demo_i)
-            demo_i += 1
+    index_matches()
+    # with open('tmp/matches.txt', 'w') as log:
+    #     demo_i = 1
+    #     matches = get_matches()
+    #     for demo in parse_demo_list():
+    #         for match in matches:
+    #             if size_match(demo['size'], match['size']):
+    #                 msg = "{} ==> {}".format(demo['path'], match['file'])
+    #                 print(msg)
+    #                 log.write(msg)
+    #                 break
+    #         if demo_i % 50 == 0:
+    #             print('demo_i', demo_i)
+    #         demo_i += 1
 
 
 
