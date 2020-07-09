@@ -147,11 +147,10 @@ def index_demo_info():
 
 def index_matches():
     directory = 'cache/ChallengeTV/demos/view'
-    match_i = 1
     start_time = time.time()
     time_spent = 0
     count = len(os.listdir(directory))
-    for file in os.listdir(directory):
+    for i, file in enumerate(os.listdir(directory)):
         file_path = os.path.join(directory, file)
         with open(file_path, 'r', errors='replace') as f:
             try:
@@ -184,15 +183,16 @@ def index_matches():
                     match.map = info['map']
                     db_session.commit()
 
-                if match_i % 50 == 0:
-                    end_time = time.time()
-                    diff = end_time - start_time
-                    time_spent += diff
-                    avg_time_per_file = time_spent / match_i
-                    time_left = avg_time_per_file * (count - match_i)
-                    print('parsed: {} ETA: {}s SPENT: {}s'.format(match_i, time_left, time_spent))
-                    start_time = end_time
-                match_i += 1
+        match_i = i + 1
+        if match_i % 50 == 0:
+            end_time = time.time()
+            diff = end_time - start_time
+            time_spent += diff
+            avg_time_per_file = time_spent / match_i
+            time_left = avg_time_per_file * (count - match_i)
+            print('parsed: {} ETA: {}s SPENT: {}s'.format(match_i, time_left, time_spent))
+            start_time = end_time
+        match_i += 1
 
 
 # select unit from match group by unit; -> B,KB,MB
