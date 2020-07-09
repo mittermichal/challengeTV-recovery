@@ -115,10 +115,16 @@ def parse_demo_info_from_path(path):
     underscore_splits = name.split('_')
     if re.match(r'^\d+$', underscore_splits[-1]):
         del underscore_splits[-1]
+    if underscore_splits[-3] == 'Enemy' and underscore_splits[-2] == 'Territory':
+        game = 'ET'
+        demo_map = underscore_splits[-4]
+    else:
+        game = underscore_splits[-2]
+        demo_map = underscore_splits[-3]
+
     teamA, teamB = map(lambda x: x.split('-')[0], underscore_splits[1:3])
     game_mode = underscore_splits[-1]
-    game = underscore_splits[-2]
-    demo_map = underscore_splits[-3]
+
     return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': demo_map}
 
 

@@ -37,3 +37,12 @@ def test_parse_demo_info_from_path_file_dup():
     assert info['game_mode'] == '8v8'
     assert info['game'] == 'ETF'
     assert info['map'] == 'openfire'
+
+
+def test_parse_demo_info_from_path_enemy_territory():
+    info = main.parse_demo_info_from_path('/ChallengeTV/demostorage/Miscellaneous/CHTV_[5thWard]-USA_TeamNutz-USA_Lackdog_-_Round2_tc_venice_rc2__Enemy_Territory_6v6.zip')
+    assert info['teamA'] == '[5thWard]'
+    assert info['teamB'] == 'TeamNutz'
+    assert info['game_mode'] == '6v6'
+    assert info['game'] == 'ET'
+    # assert info['map'] == 'tc_venice_rc2'
