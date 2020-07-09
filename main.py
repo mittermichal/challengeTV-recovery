@@ -210,6 +210,8 @@ def size_match(byte_size, var_size):
 
 
 def demo_to_match_by_size():
+    # too many connections and too slow
+    # part of data saved in tmp/demo_match.sql
     matches = MatchPage.query.filter(MatchPage.size != None).all()
     for demo in Demo.query.order_by(Demo.id).all():
         start_time = time.time()
@@ -230,9 +232,29 @@ def demo_to_match_by_size():
         print("{}".format(time.time()-start_time))
 
 
+def demo_to_match_by_game_game_mode():
+    not_found_count = 0
+    with open('tmp/game-game_mode.txt', 'w') as f:
+        with open('tmp/game-game_mode-e.txt', 'w') as err:
+            for i, demo in enumerate(Demo.query.order_by(Demo.id).all()):
+                matches = MatchPage.query.\
+                    filter(demo.game_mode == MatchPage.game_mode).\
+                    filter(demo.game == MatchPage.game).\
+                    count()
+                log_line = "{} {}\n".format(demo.id, matches)
+                f.write(log_line)
+                if matches == 0:
+                    not_found_count += 1
+                    log_line = "no matches found for {}\n".format(os.path.splitext(os.path.split(demo.path)[-1])[0])
+                    err.write(log_line)
+                if i % 50 == 0:
+                    print('demo i', i)
+            err.write("count:" + str(not_found_count))
+
+
 if __name__ == '__main__':
     # index_matches()
-    index_demo_info()
+    demo_to_match_by_game_game_mode()
     # index_demo_list()
     # demo_to_match_by_size()
     pass
