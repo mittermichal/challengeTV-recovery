@@ -43,6 +43,8 @@ class DemoMatch(Base):
 
 class DemoMatchAssocType(Enum):
     size = 0
+    gm_g_size = 1
+    manual = 2
 
 
 def init_db():

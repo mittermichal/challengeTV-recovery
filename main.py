@@ -211,7 +211,7 @@ def size_match(byte_size, var_size):
 
 def demo_to_match_by_size():
     # too many connections and too slow
-    # part of data saved in tmp/demo_match.sql
+    # part of data saved in tmp/test-size.db or tmp/demo_match.sql
     matches = MatchPage.query.filter(MatchPage.size != None).all()
     for demo in Demo.query.order_by(Demo.id).all():
         start_time = time.time()
@@ -252,9 +252,61 @@ def demo_to_match_by_game_game_mode():
             err.write("count:" + str(not_found_count))
 
 
+def demo_to_match_by_game_game_mode_size():
+    with open('tmp/game-game_mode-size.txt', 'w') as f:
+        with open('tmp/game-game_mode-size-e.txt', 'w') as err:
+            for i, demo in enumerate(Demo.query.order_by(Demo.id).all()):
+                matches = MatchPage.query.\
+                    filter(MatchPage.size != None).\
+                    filter(demo.game_mode == MatchPage.game_mode).\
+                    filter(demo.game == MatchPage.game).\
+                    all()
+                found_count = 1
+                for match in matches:
+                    if size_match(
+                            {'value': demo.size, 'unit': 'B'},
+                            {'value': match.size, 'unit': match.unit}
+                    ):
+                        # msg = "{} ==> {}".format(demo.path, match.id)
+                        # print(msg)
+                        db_session.add(DemoMatch(
+                            demo_id=demo.id,
+                            match_id=match.id,
+                            type=DemoMatchAssocType.gm_g_size.value
+                        ))
+                        db_session.commit()
+                        found_count += 1
+
+                log_line = "{} {}\n".format(demo.id, found_count)
+                f.write(log_line)
+                if len(matches) > 0 and found_count == 0:
+                    log_line = "no matches found for {} {}\n".format(
+                        os.path.splitext(os.path.split(demo.path)[-1])[0],
+                        match.id
+                    )
+                    err.write(log_line)
+                if i % 5 == 0:
+                    print('demo i', i)
+
+
 if __name__ == '__main__':
     # index_matches()
-    demo_to_match_by_game_game_mode()
+    demo_to_match_by_game_game_mode_size()
     # index_demo_list()
     # demo_to_match_by_size()
     pass
+
+
+"""
+to browse matches:
+select * from demo_match left join demo on demo_match.demo_id=demo.id left join match on demo_match.match_id=match.id;
+
+
+demo matches count stats:
+select c, count(*) from (select count(*) as c from demo_match group by demo_id) group by c; 
+
+
+
+match demos count stats:
+select c, count(*) from (select count(*) as c from demo_match group by match_id) group by c; 
+"""
