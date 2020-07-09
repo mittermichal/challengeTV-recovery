@@ -4,7 +4,7 @@ Match http://demos.igmdb.org/ChallengeTV/demos/view/<match_id> to http://demos.i
 `pip install -r requrements`     
 `python main.py`
 
-##Files:
+## Files:
  - main.py parsing and indexing
  - db.py: SQLAlchemy database models
  - tests/tests.py - pytest
