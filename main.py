@@ -85,13 +85,27 @@ def download_match_pages():
 
 def parse_demo_size_from_match_page(content):
     parsed_page = BeautifulSoup(content, "html.parser")
-    e = parsed_page.find_all("table", attrs={'bgcolor': '#3B434C'})
-    for h6 in e[0].find_all('h6'):
+    e = parsed_page.find("table", attrs={'bgcolor': '#3B434C'})
+    for h6 in e.find_all('h6'):
         if h6.contents[0].contents[0] == 'Demo Size: ':
             value, unit = h6.contents[1].split(' ')
             del parsed_page
             return {'value': float(value), 'unit': unit}
     raise Exception("Demo size failed to get parsed")
+
+
+def parse_match_info(content):
+    parsed_page = BeautifulSoup(content, "html.parser")
+    e = parsed_page.find("div", attrs={'id': 'main_content'})
+    h3s = e.find_all('h3')
+    teamA, teamB = h3s[0].text.strip().split(' vs ')
+    if h3s[1].contents[0] == 'in a ':
+        game_mode = h3s[1].contents[1].text.strip()
+    else:
+        raise Exception("Failed to parse game mode")
+    game = h3s[2].contents[0].contents[0].strip()
+    map = h3s[2].contents[0].contents[2].text.strip()
+    return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': map}
 
 
 def index_matches():
@@ -149,6 +163,7 @@ def size_match(byte_size, var_size):
 def demo_to_match_by_size():
     matches = Match.query.filter(Match.size != None).all()
     for demo in Demo.query.order_by(Demo.id).all():
+        start_time = time.time()
         print('demo:', demo.id)
         for match in matches:
             if size_match(
@@ -163,25 +178,14 @@ def demo_to_match_by_size():
                         type=DemoMatchAssocType.size.value
                     ))
                 db_session.commit()
+        print("{}".format(time.time()-start_time))
 
 
 if __name__ == '__main__':
     # index_matches()
     # index_demo_list()
-    demo_to_match_by_size()
-    # with open('tmp/matches.txt', 'w') as log:
-    #     demo_i = 1
-    #     matches = get_matches()
-    #     for demo in parse_demo_list():
-    #         for match in matches:
-    #             if size_match(demo['size'], match['size']):
-    #                 msg = "{} ==> {}".format(demo['path'], match['file'])
-    #                 print(msg)
-    #                 log.write(msg)
-    #                 break
-    #         if demo_i % 50 == 0:
-    #             print('demo_i', demo_i)
-    #         demo_i += 1
+    # demo_to_match_by_size()
+    pass
 
 
 
