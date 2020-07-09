@@ -4,7 +4,7 @@ import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
 import re
-from db import db_session, Match, Demo, DemoMatch, DemoMatchAssocType
+from db import db_session, MatchPage, Demo, DemoMatch, DemoMatchAssocType
 from sqlalchemy.orm.exc import NoResultFound
 
 # def parse_view(id):
@@ -60,6 +60,7 @@ def file_list_generator(content):
 
 
 def download_match_pages():
+    # 22000+ pages
     list_url = 'http://demos.igmdb.org/ChallengeTV/demos/view/'
     filename = 'cache/match_list.html'
     if os.path.exists(filename):
@@ -116,24 +117,36 @@ def index_matches():
     count = len(os.listdir(directory))
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', errors='replace') as f:
             try:
-                Match.query.filter(Match.id == int(file)).one()
+                match = MatchPage.query.filter(MatchPage.id == int(file)).one()
             except NoResultFound:
                 try:
                     size = parse_demo_size_from_match_page(f.read())
                 except ValueError:
                     size = None
                 if size is not None:
-                    match = Match(
+                    match = MatchPage(
                         id=int(file),
                         size=size['value'],
                         unit=size['unit']
                     )
                 else:
-                    match = Match(id=int(file))
+                    match = MatchPage(id=int(file))
                 db_session.add(match)
                 db_session.commit()
+            else:
+                try:
+                    info = parse_match_info(f.read())
+                except Exception as e:
+                    print('error in {} \n {}'.format(file, str(e)))
+                else:
+                    match.teamA = info['teamA']
+                    match.teamB = info['teamB']
+                    match.game = info['game']
+                    match.game_mode = info['game_mode']
+                    match.map = info['map']
+                    db_session.commit()
 
                 if match_i % 50 == 0:
                     end_time = time.time()
@@ -161,7 +174,7 @@ def size_match(byte_size, var_size):
 
 
 def demo_to_match_by_size():
-    matches = Match.query.filter(Match.size != None).all()
+    matches = MatchPage.query.filter(MatchPage.size != None).all()
     for demo in Demo.query.order_by(Demo.id).all():
         start_time = time.time()
         print('demo:', demo.id)
@@ -182,12 +195,7 @@ def demo_to_match_by_size():
 
 
 if __name__ == '__main__':
-    # index_matches()
+    index_matches()
     # index_demo_list()
     # demo_to_match_by_size()
     pass
-
-
-
-# parse_demo_list()
-# download_match_pages()

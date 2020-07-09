@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum
 
-engine = create_engine('sqlite:///./tmp/test.db', convert_unicode=True)
+engine = create_engine('sqlite:///./tmp/test.db')
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
@@ -12,16 +12,23 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 
-class Match(Base):
-    __tablename__ = 'match'
+class Match:
     id = Column(Integer, primary_key=True, index=True)
+    teamA = Column(String(255), index=True)
+    teamB = Column(String(255), index=True)
+    game_mode = Column(String(255), index=True)
+    game = Column(String(255), index=True)
+    map = Column(String(255), index=True)
+
+
+class MatchPage(Base, Match):
+    __tablename__ = 'match'
     size = Column(Float, index=True)
     unit = Column(String(2), index=True)
 
 
-class Demo(Base):
+class Demo(Base, Match):
     __tablename__ = 'demo'
-    id = Column(Integer, primary_key=True, index=True)
     size = Column(Integer, index=True)
     path = Column(String(255))
 
