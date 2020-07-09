@@ -4,7 +4,7 @@ import requests
 import os
 from bs4 import BeautifulSoup, NavigableString
 import re
-from db import db_session, MatchPage, Demo, DemoMatch, DemoMatchAssocType
+from db import db_session, MatchPage, Demo, DemoMatch, DemoMatchAssocType, init_db
 from sqlalchemy.orm.exc import NoResultFound
 import re
 
@@ -21,6 +21,11 @@ import re
 
 
 def index_demo_list():
+    """
+    parses file size and path of demo files and save them to DB
+    3700+ files
+    TODO: crawl whole demostorage folder
+    """
     demo_list_url = 'http://demos.igmdb.org/ChallengeTV/demostorage/Miscellaneous/'
     filename = 'cache/demo_list.html'
     if os.path.exists(filename):
@@ -42,7 +47,12 @@ def index_demo_list():
         db_session.commit()
 
 
-def file_list_generator(content):
+def file_list_generator(content: str):
+    """
+    creates iterator over files from html file list like in http://demos.igmdb.org/ChallengeTV/demostorage/Miscellaneous/
+    :param content: html
+    :yields: {'path':str,'size':int}
+    """
     parsed_page = BeautifulSoup(content, "html.parser")
     file = {}
     for i, e in enumerate(list(parsed_page.body.pre.children)):
@@ -61,6 +71,10 @@ def file_list_generator(content):
 
 
 def download_match_pages():
+    """
+    download all match pages from http://demos.igmdb.org/ChallengeTV/demos/view/ into cache folder
+    WARNING cca 1GB of html pages :)
+    """
     # 22000+ pages
     list_url = 'http://demos.igmdb.org/ChallengeTV/demos/view/'
     filename = 'cache/match_list.html'
@@ -85,7 +99,12 @@ def download_match_pages():
             raise Exception
 
 
-def parse_demo_size_from_match_page(content):
+def parse_demo_size_from_match_page(content: str):
+    """
+    parses demo size from match page
+    :param content:
+    :return: {'value': float, 'unit': str}
+    """
     parsed_page = BeautifulSoup(content, "html.parser")
     e = parsed_page.find("table", attrs={'bgcolor': '#3B434C'})
     for h6 in e.find_all('h6'):
@@ -96,7 +115,12 @@ def parse_demo_size_from_match_page(content):
     raise Exception("Demo size failed to get parsed")
 
 
-def parse_match_info(content):
+def parse_match_info(content: str):
+    """
+    parses match info from match page
+    :param content: match page html
+    :return: {'teamA': str, 'teamB': str, 'game_mode': str, 'game': str, 'map': str}
+    """
     parsed_page = BeautifulSoup(content, "html.parser")
     e = parsed_page.find("div", attrs={'id': 'main_content'})
     h3s = e.find_all('h3')
@@ -110,7 +134,13 @@ def parse_match_info(content):
     return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': map}
 
 
-def parse_demo_info_from_path(path):
+def parse_demo_info_from_path(path: str):
+    """
+    parses demo info demo path
+    :param path: path
+    :return: {'teamA': str, 'teamB': str, 'game_mode': str, 'game': str, 'map': str}
+    TODO: parse demo POV (Point of View), fix issue with teams with space (which becomes _) in name
+    """
     name = os.path.splitext(os.path.split(path)[-1])[0]
     underscore_splits = name.split('_')
     if re.match(r'^\d+$', underscore_splits[-1]):
@@ -129,6 +159,10 @@ def parse_demo_info_from_path(path):
 
 
 def index_demo_info():
+    """
+    goes though saved demos in DB, parses additional info with parse_demo_info_from_path(path) and update the db record
+    with additional info
+    """
     for i, demo in enumerate(Demo.query.order_by(Demo.id).all()):
         try:
             info = parse_demo_info_from_path(demo.path)
@@ -146,6 +180,11 @@ def index_demo_info():
 
 
 def index_matches():
+    """
+    opens every match page html saved in cache folder parse info and save it into database.
+    needs to be called twice
+    TODO: make it so that it needs to be called just once
+    """
     directory = 'cache/ChallengeTV/demos/view'
     start_time = time.time()
     time_spent = 0
@@ -196,7 +235,13 @@ def index_matches():
 
 
 # select unit from match group by unit; -> B,KB,MB
-def size_match(byte_size, var_size):
+def size_match(byte_size: dict, var_size: dict):
+    """
+    compares if size in bytes can be rounded to size in B/KB/MB
+    :param byte_size: {value: int, 'unit': 'B'}
+    :param var_size: {value: int, 'unit': str}
+    :return: True if can be rounded
+    """
     if byte_size['unit'] != 'B' or var_size['unit'] not in ['B', 'KB', 'MB']:
         raise Exception('wrong byte unit')
     if var_size['unit'] == 'B':
@@ -233,6 +278,9 @@ def demo_to_match_by_size():
 
 
 def demo_to_match_by_game_game_mode():
+    """
+    matches 'Matches' and 'Demos' by game mode, game, produces log files in tmp
+    """
     not_found_count = 0
     with open('tmp/game-game_mode.txt', 'w') as f:
         with open('tmp/game-game_mode-e.txt', 'w') as err:
@@ -253,6 +301,9 @@ def demo_to_match_by_game_game_mode():
 
 
 def demo_to_match_by_game_game_mode_size():
+    """
+    matches 'Matches' and 'Demos' by game mode, game and size. Store matches into association table
+    """
     with open('tmp/game-game_mode-size.txt', 'w') as f:
         with open('tmp/game-game_mode-size-e.txt', 'w') as err:
             for i, demo in enumerate(Demo.query.order_by(Demo.id).all()):
@@ -290,10 +341,13 @@ def demo_to_match_by_game_game_mode_size():
 
 
 if __name__ == '__main__':
-    # index_matches()
+    init_db()
+    index_demo_list()
+    index_demo_info()
+    download_match_pages()
+    index_matches()
+    index_matches()
     demo_to_match_by_game_game_mode_size()
-    # index_demo_list()
-    # demo_to_match_by_size()
     pass
 
 
