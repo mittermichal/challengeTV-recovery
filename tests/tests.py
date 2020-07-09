@@ -19,3 +19,12 @@ def test_parse_match_info():
         info['game_mode'] == '4v4' and \
         info['game'] == 'Quakeworld' and \
         info['map'] == 'DM3'
+
+
+def test_parse_demo_info_from_path():
+    info = main.parse_demo_info_from_path('/ChallengeTV/demostorage/Miscellaneous/CHTV_20id-USA_SB-USA_xerxes_Dustbowl_TF2_6v6.zip')
+    assert info['teamA'] == '20id' and \
+        info['teamB'] == 'SB' and \
+        info['game_mode'] == '6v6' and \
+        info['game'] == 'TF2' and \
+        info['map'] == 'Dustbowl'

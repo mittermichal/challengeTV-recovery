@@ -109,6 +109,16 @@ def parse_match_info(content):
     return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': map}
 
 
+def parse_demo_info_from_path(path):
+    name = os.path.splitext(os.path.split(path)[-1])[0]
+    underscore_splits = name.split('_')
+    teamA, teamB = map(lambda x: x.split('-')[0], underscore_splits[1:3])
+    game_mode = underscore_splits[-1]
+    game = underscore_splits[-2]
+    demo_map = underscore_splits[-3]
+    return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': demo_map}
+
+
 def index_matches():
     directory = 'cache/ChallengeTV/demos/view'
     match_i = 1
