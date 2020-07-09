@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup, NavigableString
 import re
 from db import db_session, MatchPage, Demo, DemoMatch, DemoMatchAssocType
 from sqlalchemy.orm.exc import NoResultFound
+import re
 
 # def parse_view(id):
 #     root=html.fromstring(requests.get('http://demos.igmdb.org/ChallengeTV/demos/view/'+str(id)).text)
@@ -112,11 +113,30 @@ def parse_match_info(content):
 def parse_demo_info_from_path(path):
     name = os.path.splitext(os.path.split(path)[-1])[0]
     underscore_splits = name.split('_')
+    if re.match(r'^\d+$', underscore_splits[-1]):
+        del underscore_splits[-1]
     teamA, teamB = map(lambda x: x.split('-')[0], underscore_splits[1:3])
     game_mode = underscore_splits[-1]
     game = underscore_splits[-2]
     demo_map = underscore_splits[-3]
     return {'teamA': teamA, 'teamB': teamB, 'game_mode': game_mode, 'game': game, 'map': demo_map}
+
+
+def index_demo_info():
+    for i, demo in enumerate(Demo.query.order_by(Demo.id).all()):
+        try:
+            info = parse_demo_info_from_path(demo.path)
+        except Exception as e:
+            print('error in demo {} {} \n {}'.format(demo.id, demo.path, str(e)))
+        else:
+            demo.teamA = info['teamA']
+            demo.teamB = info['teamB']
+            demo.game = info['game']
+            demo.game_mode = info['game_mode']
+            demo.map = info['map']
+            db_session.commit()
+        if i % 50 == 0:
+            print('demo i', i)
 
 
 def index_matches():
@@ -205,7 +225,8 @@ def demo_to_match_by_size():
 
 
 if __name__ == '__main__':
-    index_matches()
+    # index_matches()
+    index_demo_info()
     # index_demo_list()
     # demo_to_match_by_size()
     pass
