@@ -1,7 +1,7 @@
 # Goal
 Match http://demos.igmdb.org/ChallengeTV/demos/view/<match_id> to http://demos.igmdb.org/ChallengeTV/demostorage/Miscellaneous/<demo_archive>
 # Running
-`pip install -r requrements`     
+`pip install -r requirements.txt`     
 `python main.py`
 
 ## Files:
